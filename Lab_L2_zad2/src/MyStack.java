@@ -2,11 +2,12 @@ public class MyStack<T> implements IStack<T>{
     private static final int DEFAULT_CAPACITY = 3;
     T array[];
     int topIndex;
+    int beginIndex;
+
 
     @SuppressWarnings("unchecked")
     public MyStack(int capacity){
-        array=(T[])(new Object[capacity]);
-        topIndex=0;
+        array=(T[])(new Object[capacity+1]);
     }
 
     public MyStack (){
@@ -15,33 +16,38 @@ public class MyStack<T> implements IStack<T>{
 
     @Override
     public boolean isEmpty() {
-        return topIndex==0;
+        return topIndex==beginIndex;
     }
 
     @Override
     public boolean isFull() {
-        return topIndex==array.length;
+        return beginIndex==(topIndex+1)%array.length;
     }
 
     @Override
     public T pop() throws EmptyStackException {
-        if(isEmpty())
+        if (isEmpty())
             throw new EmptyStackException();
-        return array[--topIndex];
+        if (topIndex == 0){
+            topIndex=array.length;
+        }
+        topIndex--;
+        return array[topIndex];
     }
 
     @Override
     public void push(T elem) throws FullStackException {
         if(isFull()){
-            System.arraycopy(array,1,array,0,array.length-1);
-            topIndex--;
+            beginIndex++;
+            beginIndex%=array.length;
         }
         array[topIndex++]=elem;
+        topIndex%=array.length;
     }
 
     @Override
     public int size() {
-        return topIndex;
+        return (topIndex+array.length-beginIndex) % array.length;
     }
 
     @Override
@@ -51,9 +57,12 @@ public class MyStack<T> implements IStack<T>{
         return array[topIndex-1];
     }
 
-    public void wyswietl(){
-        for(T thing:array){
-            System.out.print(thing+" ");
+    public void wyswietl(){//zwykły for
+        int n = beginIndex;
+        for(int i=0;i<3;i++){
+            System.out.print(array[n]+" ");
+            n++;
+            n%=array.length;
         }
     }
 }
