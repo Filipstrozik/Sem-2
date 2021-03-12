@@ -1,5 +1,4 @@
 public class VTStack<T> extends MyStack<T> {
-
     int _cursor;
 
     public VTStack(int capacity) {
@@ -27,7 +26,7 @@ public class VTStack<T> extends MyStack<T> {
     }
 
     @Override
-    public void push(T elem) throws FullStackException {
+    public void push(T elem){
         super.push(elem);
     }
 
@@ -57,8 +56,11 @@ public class VTStack<T> extends MyStack<T> {
     }
 
     public void down() throws BottomOfStackException {
-        if(_cursor<=0)
+        if(_cursor==this.beginIndex)
             throw new BottomOfStackException();
+        if(_cursor==0){
+            _cursor=this.array.length;
+        }
         _cursor--;
     }
 

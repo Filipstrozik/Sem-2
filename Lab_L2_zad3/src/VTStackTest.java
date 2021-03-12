@@ -92,4 +92,14 @@ class VTStackTest {
         vtstack.down();
         assertEquals(0,vtstack._cursor);
     }
+
+    @Test
+    void down2() throws FullStackException, BottomOfStackException {
+        vtstack.push(5);
+        vtstack.push(7);
+        vtstack.push(6);
+        vtstack.toTop();
+        vtstack.down();
+        assertEquals(1,vtstack._cursor);
+    }
 }
