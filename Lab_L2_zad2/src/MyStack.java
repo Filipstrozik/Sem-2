@@ -36,7 +36,7 @@ public class MyStack<T> implements IStack<T>{
     }
 
     @Override
-    public void push(T elem) throws FullStackException {
+    public void push(T elem){
         if(isFull()){
             beginIndex++;
             beginIndex%=array.length;

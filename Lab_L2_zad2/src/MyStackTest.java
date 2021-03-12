@@ -45,7 +45,7 @@ class MyStackTest {
     }
 
     @Test
-    void push() throws FullStackException {
+    void push(){
         assertEquals(0, mystack.size());
         Integer element = 1888;
         mystack.push(element);
