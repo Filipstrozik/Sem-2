@@ -173,11 +173,17 @@ public class BinomialHeap<K extends Comparable>{
 
     public K minimumKey(){
         Node<K> minimum = minimum();
+        if(minimum == null){
+            return null;
+        }
         return minimum.key;
     }
 
     private Node<K> minimum()
     {
+        if(head==null){
+            return null;
+        }
         Node<K> y = this.head;
         Node<K> x = this.head;
         K min = x.key;
@@ -292,7 +298,6 @@ public class BinomialHeap<K extends Comparable>{
         }
         return node;
     }
-
 
 
     public void  showHeap(){
