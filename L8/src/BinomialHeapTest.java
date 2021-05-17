@@ -1,6 +1,8 @@
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.NoSuchElementException;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class BinomialHeapTest {
@@ -39,6 +41,26 @@ class BinomialHeapTest {
         assertEquals(1, bh.size());
         bh.delete(10);
         assertEquals(0, bh.size());
+    }
+
+    @Test
+    void deleteTest() {
+        bh.insert(10);
+        bh.showHeap();
+        boolean flag = false;
+        try {
+            bh.delete(5);
+        } catch (NoSuchElementException e){
+            flag = true;
+        }
+        assertTrue(flag);
+
+        bh.showHeap();
+
+        bh.delete(10);
+
+        assertEquals(0, bh.size());
+        bh.showHeap();
     }
 
     @Test
@@ -125,6 +147,21 @@ class BinomialHeapTest {
 
     @Test
     void decreaseKeyTest(){
-        assertEquals(1, bh.size());
+        assertEquals(0, bh.size());
+        bh.insert(20);
+        bh.insert(10);
+        assertEquals(10,bh.minimumKey());
+        bh.showHeap();
+        bh.decreaseKey(20,5);
+        assertEquals(5,bh.minimumKey());
+        boolean flag = false;
+        try {
+            bh.decreaseKey(5,8);
+        }
+        catch (IllegalStateException e){
+            flag = true;
+        }
+        bh.showHeap();
+        assertTrue(flag);
     }
 }

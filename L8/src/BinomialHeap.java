@@ -1,6 +1,7 @@
 import java.security.Key;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.NoSuchElementException;
 
 public class BinomialHeap<K extends Comparable>{
 
@@ -250,10 +251,9 @@ public class BinomialHeap<K extends Comparable>{
 
     }
 
-    public void decreaseKey(K old, K new_val){
+    public void decreaseKey(K old, K new_val) {
         if(comparator.compare(new_val, old)>0){
-            System.out.println("Error! decrease, not increase!");
-            return;
+            throw new IllegalStateException();
         }
         Node<K> temp = findNode(head ,old);
         if(temp == null){
@@ -274,6 +274,9 @@ public class BinomialHeap<K extends Comparable>{
 
 
     public void delete(K x){
+        if(findNode(head,x)==null){
+            throw new NoSuchElementException();
+        }
         decreaseKey(x, minimumKey());
         extractMin();
     }

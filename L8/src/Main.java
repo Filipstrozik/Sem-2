@@ -17,7 +17,6 @@ public class Main {
         System.out.println( bh1.extractMin());
         bh1.showHeap();
         System.out.println( bh1.minimumKey());
-        bh1.decreaseKey(5, 11);
         bh1.decreaseKey(10, 3);
         System.out.println(bh1.size());
         bh1.showHeap();
