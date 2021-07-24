@@ -56,31 +56,12 @@ operacje:
 	beq $v0, 0, print_result
 	beq $v0, 1, print_postfix
 	
- 	#beq $v0, 0, print_tree
- 	
- 	#beq $v0, 1, print_result
-
-	#beq $v0, 2, print_infix
-	
-	#beq $v0, 3, print_postfix
-	
 	j blad_wyboru
 	
-#print_tree:
- 	#jal utworz_shunting_yard 
-  	#j end
-  	
 print_result:
 	jal utworz_shunting_yard
 	move $a0, $v0
 	jal rpn_parser
-	#move $a0, $v0
-	
-	#lwc1 $f6, zeroAsFloat
-	#add.s $f12, $f2 ,$f6
-  
-	#li $v0, 1
-	#syscall
 	
 	swc1 $f12, P_float
 	
@@ -95,12 +76,6 @@ print_result:
 	
 	j end
 	
-#print_infix:
- #	li $v0, 4
- #	la $a0, ZAP_ROWNANIE
- #	syscall
- #	j end
-
 print_postfix:
 	jal utworz_shunting_yard
 	move $s0, $v0
@@ -113,12 +88,6 @@ l0_begin_print_postfix:
   
   	move $a0, $s0
   	jal peek_front_deque
-
-#  	la $t0, TOK_P
- # 	lb $t0, ($t0)
-  #	lb $t1, ($v0)
-  #	bne $t0, $t1, is_p
-
 
   	la $t0, TOK_NUM
   	lb $t0, ($t0)
@@ -234,12 +203,8 @@ ope_p:
 is_p:
 
 	lb $a0, ($v0)
-	#lb $a0, 1($v0)
-  	#addi $a0, $a0, 48		#48 = '0'
   	j l0_continue_print_postfix
 	
-#	li $a0, 80		# 80 = 'P'
-#	j l0_continue_print_postfix
 	
 l0_continue_print_postfix:
 	li $v0, 11
@@ -256,12 +221,6 @@ l0_end_print_postfix:
 	syscall
 
 	j end
-	
-#sout:
-#	la $a0, SOUT
-#	li $v0, 4
-#	syscall
-#	jr $ra
 	
 	
 blad_wyboru:
@@ -342,9 +301,7 @@ rightbracket:
 	j rightbracket
 	
 	leftbracket:
-	
-	#j failed_to_choose
-	
+
 	move $a0, $s0 		#s0 stos -> a0
 	jal pop_back_deque	
 	#move $a0, $s2 
@@ -589,11 +546,6 @@ token_is_operator:
  	
 	bge $t0, $t1, l0_end_save_token
 	
-	#beq $t1, 8, l0_end_save_token
- 	#beq $t1, 7, l0_end_save_token
-
-	
-#	beq $t0, 10, prawynawias
   
 	ominzamiane:
  
@@ -861,6 +813,12 @@ l0_begin_rpn_parser:
 	
 	#TUTAJ TRZEBA ZROBIC WHILE'A TAKIEGO, ZE MNOZY I SUMUJE TEMP ZMIENNA
   	#jest numerek
+  	
+  	bne $t6 , -1, nieresetuj
+  	li $t6, 0
+  	
+  	nieresetuj:
+  	
   	li $t7, 10
   	lb $t5, 1($v0) #czyli tutaj mam warosc
   	mul $t6, $t6, $t7
@@ -881,7 +839,7 @@ l0_begin_rpn_parser:
 	lb $t1, ($v0)
   	bne  $t0, $t1, is_operator
   	
-  	beq $t6, 0, l0_continue_rpn_parse
+  	beq $t6, -1, l0_continue_rpn_parse
   	
   	la $t0, TOK_NUM
   	lb $a0, ($t0)
@@ -900,7 +858,8 @@ l0_begin_rpn_parser:
   	move $a1, $v0
   	jal push_back_deque
   	
-  	li $t6, 0
+  	#li $t6, 0
+  	li $t6, -1
   	
   	j l0_continue_rpn_parse
   	
@@ -936,11 +895,6 @@ is_operator:
 	move $a0, $s1
 	jal peek_back_deque
 	mtc1 $v0,$f2
-	#lb $s2, 1($v0)
-	#cvt.s.w $f2, $s2 #TRZEBA SPRAWDZIC CZY NIE BYL JUZ UZYWANY BO TUTAJ SIE NADPISUJE
-	#mtc1 $s2, $f2
-	#cvt.s.w $f2, $f2
-	#lwc1   $f2, 1($v0)
  
 	move $a0, $s1
 	jal pop_back_deque
@@ -956,11 +910,9 @@ is_operator:
 
 	move $a0, $s1
 	jal peek_back_deque
-	#lb $s3, 1($v0)
+
 	mtc1 $v0, $f3
-	#cvt.s.w $f3, $f3
-	#cvt.s.w $f4, $s3
-	#lwc1 $f4, 16($v0)
+
   
 	move $a0, $s1
 	jal pop_back_deque
@@ -990,31 +942,39 @@ is_operator:
 	beq $t0, $s4, op_eq
 
 op_sum:
-  	#add $s2, $s2, $s3
+
   	add.s $f2, $f2, $f3
   	j op_end
 
 op_sub:
-  	#sub $s2, $s3, $s2
+
   	sub.s $f2, $f3, $f2
 
   	j op_end
 
 op_mult:
-	#mult $s2, $s3
-  	#mflo $s2
+
   	mul.s $f2, $f2, $f3
   	j op_end
 
 op_div:
-  	#div $s2, $s3, $s2
+
   	div.s $f2, $f3, $f2
- # 	mflo $s2
+
   	j op_end
   	
 op_exp: #procedura potegowania pls
 	
-	#zrobic to ze 2^0 i 2^-1
+	#zrobic  2^-1
+	lwc1 $f6, zeroAsFloat
+	c.eq.s $f2, $f6
+	bc1t powerToZero
+	
+	lwc1 $f6, oneAsFloat
+	neg.s $f6, $f6
+	c.eq.s $f2 , $f6
+	bc1t powerToMinusOne
+	
 	
 	lwc1 $f6, oneAsFloat
 	lwc1 $f12, oneAsFloat
@@ -1027,12 +987,25 @@ op_exp: #procedura potegowania pls
   	lwc1 $f6, zeroAsFloat
   	add.s $f2, $f12, $f6
 	
-#	move $s2, $s6
+
   	j op_end
   	
   	
+ powerToZero:
+ 	 lwc1 $f6, zeroAsFloat	
+  	 lwc1 $f2, oneAsFloat
+  	 
+  	 j op_end
+  	 
+powerToMinusOne:
+	lwc1 $f2, oneAsFloat
+	div.s $f2, $f2, $f3
+	j op_end
+  	 
+  	 
+  	
 op_fac:
-	#miejsce na silnie
+
 	lwc1 $f6, oneAsFloat
 	lwc1 $f12, oneAsFloat
 	fac:
@@ -1046,7 +1019,7 @@ op_fac:
   	j op_end
   	
 op_abs:
-	#abs $s2, $s2
+
 	abs.s $f2, $f2
 	j op_end
 
@@ -1061,14 +1034,9 @@ eq:
 
 op_end:
   	la $t0, TOK_FLOAT
-  	#la $t0, TOK_FLOAT
+
   	lw $a0, ($t0)
- 
- 	#cvt.w.s $f2, $f2
- 	#mfc1 $s2, $f2 #to nam usuwa juz informacje o przecinku
-  	#move $a1, $s2
-  	#jal create_token
-  	
+ 	
   	swc1 $f2, float1
   	
   	lw $v0, float1
@@ -1087,8 +1055,6 @@ l0_end_rpn_parser:
 	move $a0, $s1
 	jal peek_back_deque
  
-	#lb $s2, 1($v0)
-	#lw $s2, 1($v0)
 	
 	mtc1 $v0,$f2
 	

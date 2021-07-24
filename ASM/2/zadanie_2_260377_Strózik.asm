@@ -25,6 +25,7 @@
 	
 	main:					#glowna funkcja od ktorej sie zaczyna program
 	
+	
 
 	jal displayNaglowek			#wysiwetl "Kalkulator!"
 	
